@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../providers/show_provider.dart';
-import '../screens/detail_screen.dart';
-import '../widgets/show_card.dart';
+import '../../providers/show_provider.dart';
+import '../../widgets/show_card.dart';
+import 'detail_view.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
