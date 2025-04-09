@@ -2,13 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../providers/show_provider.dart';
-<<<<<<< HEAD
-import 'detail_view.dart';
-import '../../widgets/show_card.dart';
-=======
 import '../../widgets/show_card.dart';
 import 'detail_view.dart';
->>>>>>> 330174e7e85d3f04840cb41c04f638ce02729e3c
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
@@ -19,6 +14,8 @@ class HomeView extends StatefulWidget {
 
 class _HomeViewState extends State<HomeView> {
   final TextEditingController _searchController = TextEditingController();
+  int currentPage = 0;
+  final int itemsPerPage = 7;
 
   @override
   void initState() {
@@ -28,6 +25,9 @@ class _HomeViewState extends State<HomeView> {
 
   void _onSearch() {
     final query = _searchController.text.trim();
+    setState(() {
+      currentPage = 0; // Reset to first page on new search
+    });
     if (query.isNotEmpty) {
       Provider.of<ShowProvider>(context, listen: false).searchShows(query);
     } else {
@@ -35,14 +35,36 @@ class _HomeViewState extends State<HomeView> {
     }
   }
 
+  void _goToPreviousPage() {
+    if (currentPage > 0) {
+      setState(() {
+        currentPage--;
+      });
+    }
+  }
+
+  void _goToNextPage(int totalItems) {
+    if ((currentPage + 1) * itemsPerPage < totalItems) {
+      setState(() {
+        currentPage++;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<ShowProvider>(context);
+    final totalItems = provider.shows.length;
+
+    // Calcule la portion à afficher pour cette page
+    final startIndex = currentPage * itemsPerPage;
+    final endIndex = (startIndex + itemsPerPage).clamp(0, totalItems);
+    final currentPageItems = provider.shows.sublist(startIndex, endIndex);
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('TV Shows'),
-        backgroundColor: Colors.indigo,
+        backgroundColor: const Color.fromARGB(255, 14, 28, 226),
       ),
       body: Column(
         children: [
@@ -60,27 +82,49 @@ class _HomeViewState extends State<HomeView> {
             ),
           ),
           if (provider.isLoading)
-            const CircularProgressIndicator()
-          else if (provider.shows.isEmpty)
+            const Expanded(child: Center(child: CircularProgressIndicator()))
+          else if (totalItems == 0)
             const Expanded(child: Center(child: Text('No results')))
           else
             Expanded(
-              child: ListView.builder(
-                itemCount: provider.shows.length,
-                itemBuilder: (context, index) {
-                  final show = provider.shows[index];
-                  return GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => DetailScreen(showId: show.id),
-                        ),
-                      );
-                    },
-                    child: ShowCard(show: show),
-                  );
-                },
+              child: Column(
+                children: [
+                  Expanded(
+                    child: ListView.builder(
+                      itemCount: currentPageItems.length,
+                      itemBuilder: (context, index) {
+                        final show = currentPageItems[index];
+                        return GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => DetailScreen(showId: show.id),
+                              ),
+                            );
+                          },
+                          child: ShowCard(show: show),
+                        );
+                      },
+                    ),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.arrow_back),
+                        onPressed: currentPage > 0 ? _goToPreviousPage : null,
+                      ),
+                      Text('Page ${currentPage + 1}'),
+                      IconButton(
+                        icon: const Icon(Icons.arrow_forward),
+                        onPressed: (currentPage + 1) * itemsPerPage < totalItems
+                            ? () => _goToNextPage(totalItems)
+                            : null,
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ),
         ],
