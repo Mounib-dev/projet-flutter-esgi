@@ -1,7 +1,9 @@
 
 ## Documentation Technique – Application Flutter "TV Shows"
 
-** Présentation Générale L’application “TV Shows” est une application Flutter multiplateforme permettant aux utilisateurs de :
+Présentation Générale L’application “TV Shows” est une application Flutter multiplateforme 
+permettant aux utilisateurs de :
+
 1- Consulter une liste de séries populaires
 2- Rechercher des séries par nom
 3- Visualiser les détails d’une série
@@ -37,73 +39,55 @@ avec un découpage propre en :
 
 3- Provider (lib/providers/show_provider.dart)
 
-Classe ShowProvider : gère l’état de l’application via ChangeNotifier.
+ - Classe ShowProvider : gère l’état de l’application via ChangeNotifier.
+   
+  ## Responsabilités :
+  - Conserver la liste des séries (shows)
+  - Indiquer si une requête est en cours (isLoading)
+  - Gérer la pagination (currentPage)
+  - Suivre le mot-clé de recherche (searchQuery)
+  - Fournir des méthodes publiques pour charger ou rechercher des séries.
 
-Responsabilités :
+4- UI – Views
 
-Conserver la liste des séries (shows)
+ - HomeView :
+   Affiche une barre de recherche
+   Liste des séries (via ShowCard)
+   Navigation vers les détails (DetailScreen)
 
-Indiquer si une requête est en cours (isLoading)
+ - DetailView :
+   Charge et affiche les détails d’une série à partir de son ID
+   Affiche image, titre et description
 
-Gérer la pagination (currentPage)
+5-  Widgets
+   ShowCard (lib/widgets/show_card.dart) : Widget utilisé dans les listes pour représenter une série avec image et titre.
+   State Management (Provider)
 
-Suivre le mot-clé de recherche (searchQuery)
+   L’état est centralisé dans ShowProvider.
+   Au démarrage, fetchPopularShows() est appelé automatiquement.
+   Lors d’une recherche, searchShows(query) est déclenché.
+   Les views écoutent les changements via Provider.of<ShowProvider>(context).
 
-Fournir des méthodes publiques pour charger ou rechercher des séries.
+## Navigation
 
-3.4 UI – Écrans
+- Utilisation de Navigator.push pour la navigation entre HomeView et DetailView.
+- La classe TVShow contient un identifiant utilisé pour récupérer les détails d’une série.
 
-HomeScreen :
+## API utilisée
 
-Affiche une barre de recherche
+   L’application interagit avec l’API REST suivante :
 
-Liste des séries (via ShowCard)
+   Base : https://www.episodate.com/api
 
-Navigation vers les détails (DetailScreen)
+  Endpoints :
 
-DetailScreen :
-
-Charge et affiche les détails d’une série à partir de son ID
-
-Affiche image, titre et description
-
-3.5 Widgets
-
-ShowCard (lib/widgets/show_card.dart) : Widget utilisé dans les listes pour représenter une série avec image et titre.
-
-State Management (Provider)
-
-L’état est centralisé dans ShowProvider.
-
-Au démarrage, fetchPopularShows() est appelé automatiquement.
-
-Lors d’une recherche, searchShows(query) est déclenché.
-
-Les écrans écoutent les changements via Provider.of<ShowProvider>(context).
-
-Navigation
-
-Utilisation de Navigator.push pour la navigation entre HomeScreen et DetailScreen.
-
-La classe TVShow contient un identifiant utilisé pour récupérer les détails d’une série.
-
-API utilisée
-
-L’application interagit avec l’API REST suivante :
-
-Base : https://www.episodate.com/api
-
-Endpoints :
-
-GET /most-popular?page= → liste paginée des séries
-
-GET /search?q= → recherche d’une série
-
-GET /show-details?q= → détails d’une série
+    GET /most-popular?page= → liste paginée des séries
+    GET /search?q= → recherche d’une série
+    GET /show-details?q= → détails d’une série
 
 - Les réponses sont au format JSON.
 
-Dépendances du projet
+## Dépendances du projet
 
 pubspec.yaml :
 
