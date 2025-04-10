@@ -5,6 +5,7 @@ import '../services/api_service.dart';
 
 class DetailScreen extends StatefulWidget {
   final String showId;
+
   const DetailScreen({super.key, required this.showId});
 
   @override
@@ -48,25 +49,32 @@ class _DetailScreenState extends State<DetailScreen> {
                   Stack(
                     alignment: Alignment.bottomLeft,
                     children: [
-                      ClipRRect(
-                        borderRadius: const BorderRadius.only(
-                          bottomLeft: Radius.circular(32),
-                          bottomRight: Radius.circular(32),
-                        ),
-                        child: Image.network(
-                          _show!.image,
-                          width: double.infinity,
-                          height: 300,
-                          fit: BoxFit.fitWidth,
-                          errorBuilder: (context, error, stackTrace) {
-                            return Container(
-                              height: 300,
-                              width: double.infinity,
-                              color: Colors.grey.shade800,
-                              child: const Icon(Icons.broken_image,
-                                  size: 64, color: Colors.white70),
-                            );
-                          },
+                      Center(
+                        child: Container(
+                          constraints: const BoxConstraints(maxWidth: 600),
+                          child: AspectRatio(
+                            aspectRatio: 2 / 3,
+                            child: ClipRRect(
+                              borderRadius: const BorderRadius.only(
+                                bottomLeft: Radius.circular(32),
+                                bottomRight: Radius.circular(32),
+                              ),
+                              child: Image.network(
+                                _show!.image,
+                                fit: BoxFit.cover,
+                                errorBuilder: (context, error, stackTrace) {
+                                  return Container(
+                                    color: Colors.grey.shade800,
+                                    child: const Icon(
+                                      Icons.broken_image,
+                                      size: 64,
+                                      color: Colors.white70,
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                          ),
                         ),
                       ),
                       Container(
