@@ -15,19 +15,39 @@ class HomeView extends StatefulWidget {
 
 class _HomeViewState extends State<HomeView> {
   final TextEditingController _searchController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
-    Provider.of<ShowProvider>(context, listen: false).fetchPopularShows();
+    final provider = Provider.of<ShowProvider>(context, listen: false);
+    provider.fetchPopularShows();
+
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels >=
+              _scrollController.position.maxScrollExtent - 300 &&
+          !provider.isLoading &&
+          provider.hasMore &&
+          !provider.isLoadingMore) {
+        provider.loadMorePopularShows();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    _searchController.dispose();
+    super.dispose();
   }
 
   void _onSearch() {
     final query = _searchController.text.trim();
+    final provider = Provider.of<ShowProvider>(context, listen: false);
     if (query.isNotEmpty) {
-      Provider.of<ShowProvider>(context, listen: false).searchShows(query);
+      provider.searchShows(query);
     } else {
-      Provider.of<ShowProvider>(context, listen: false).fetchPopularShows();
+      provider.fetchPopularShows();
     }
   }
 
@@ -47,8 +67,6 @@ class _HomeViewState extends State<HomeView> {
         actions: [
           Row(
             children: [
-              //Icon(isDark ? Icons.dark_mode : Icons.light_mode,
-              //color: Theme.of(context).iconTheme.color),
               Switch(
                 value: isDark,
                 onChanged: themeProvider.toggleTheme,
@@ -108,28 +126,41 @@ class _HomeViewState extends State<HomeView> {
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 12),
-                child: GridView.builder(
-                  itemCount: provider.shows.length,
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 3,
-                    crossAxisSpacing: 12,
-                    mainAxisSpacing: 12,
-                    childAspectRatio: 2 / 3,
-                  ),
-                  itemBuilder: (context, index) {
-                    final show = provider.shows[index];
-                    return GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => DetailScreen(showId: show.id),
-                          ),
-                        );
-                      },
-                      child: ShowCard(show: show),
-                    );
-                  },
+                child: Column(
+                  children: [
+                    Expanded(
+                      child: GridView.builder(
+                        controller: _scrollController,
+                        itemCount: provider.shows.length,
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 3,
+                          crossAxisSpacing: 12,
+                          mainAxisSpacing: 12,
+                          childAspectRatio: 2 / 3,
+                        ),
+                        itemBuilder: (context, index) {
+                          final show = provider.shows[index];
+                          return GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => DetailScreen(showId: show.id),
+                                ),
+                              );
+                            },
+                            child: ShowCard(show: show),
+                          );
+                        },
+                      ),
+                    ),
+                    if (provider.isLoadingMore)
+                      const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 12),
+                        child: CircularProgressIndicator(color: Colors.red),
+                      ),
+                  ],
                 ),
               ),
             ),
