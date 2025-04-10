@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import '../../providers/show_provider.dart';
 import '../../providers/theme_provider.dart';
 import '../../widgets/show_card.dart';

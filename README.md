@@ -88,12 +88,11 @@ avec un découpage propre en :
 
 ## API utilisée
 
-   L’application interagit avec l’API REST suivante :
+L’application interagit avec l’API REST suivante :
 
-   Base : https://www.episodate.com/api
+- Base : https://www.episodate.com/api
 
-  Endpoints :
-
+- Endpoints :
     GET /most-popular?page= → liste paginée des séries
     GET /search?q= → recherche d’une série
     GET /show-details?q= → détails d’une série
@@ -101,15 +100,12 @@ avec un découpage propre en :
 - Les réponses sont au format JSON.
 
 ## Dépendances du projet
+   pubspec.yaml :
+       dependencies: flutter: 
+           sdk: flutter http: ^0.13.6 provider: ^6.1.1
 
-pubspec.yaml :
+- Lancement du projet
+- flutter pub get
+- flutter run
 
-dependencies: flutter: sdk: flutter http: ^0.13.6 provider: ^6.1.1
-
-Lancement du projet
-
-flutter pub get
-
-flutter run
-
-L’app démarre sur HomeScreen et récupère les séries populaires dès le début.
+L’app démarre sur HomeView et récupère les séries populaires dès le début.
