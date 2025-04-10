@@ -8,11 +8,36 @@ class ShowCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.all(8),
-      child: ListTile(
-        leading: Image.network(show.image, width: 50, fit: BoxFit.cover),
-        title: Text(show.name),
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(12),
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          Image.network(
+            show.image,
+            fit: BoxFit.cover,
+            errorBuilder: (context, error, stackTrace) =>
+                Container(color: Colors.grey[800]),
+          ),
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+              color: Colors.black.withOpacity(0.6),
+              child: Text(
+                show.name,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 24,
+                  fontWeight: FontWeight.w400,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

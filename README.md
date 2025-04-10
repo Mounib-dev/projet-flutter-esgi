@@ -16,7 +16,7 @@ avec un découpage propre en :
 
 - models : Définit les structures de données (ex : TVShow)
 - services : Contient les appels réseau/API (ApiService)
-- providers : Gère l’état de l’application avec Provider + ChangeNotifier
+- providers : Gère l’état de l’application avec Provider + ChangeNotifier(ShowProvider, ThemeProvider)
 - views : Les interfaces utilisateur (HomeViews, DetailViews)
 - widgets : Composants UI réutilisables (ShowCard)
 
@@ -47,6 +47,19 @@ avec un découpage propre en :
   - Gérer la pagination (currentPage)
   - Suivre le mot-clé de recherche (searchQuery)
   - Fournir des méthodes publiques pour charger ou rechercher des séries.
+  - Deux scroll infinis pour la pagination :
+    loadMorePopularShows()
+    loadMoreSearchResults()
+
+- ThemeProvider
+  Gère le thème de l’application :
+  ThemeMode _themeMode = ThemeMode.dark;
+  void toggleTheme(bool isOn) { ... }
+  Expose :
+  themeMode
+  isDarkMode
+  toggleTheme(bool)
+
 
 4- UI – Views
 
