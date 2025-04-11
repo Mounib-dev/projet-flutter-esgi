@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+
 import '../models/show.dart';
 import '../services/api_service.dart';
 
 class DetailScreen extends StatefulWidget {
   final String showId;
+
   const DetailScreen({super.key, required this.showId});
 
   @override
@@ -32,33 +34,133 @@ class _DetailScreenState extends State<DetailScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         title: const Text('Show Details'),
-        backgroundColor: Colors.indigo,
+        backgroundColor: Colors.transparent,
+        elevation: 0,
       ),
-      body:
-          _loading
-              ? const Center(child: CircularProgressIndicator())
-              : Padding(
-                padding: const EdgeInsets.all(16),
-                child: SingleChildScrollView(
-                  child: Column(
+      body: _loading
+          ? const Center(child: CircularProgressIndicator())
+          : SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Stack(
+                    alignment: Alignment.bottomLeft,
                     children: [
-                      Image.network(_show!.image),
-                      const SizedBox(height: 16),
-                      Text(
-                        _show!.name,
-                        style: const TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
+                      Center(
+                        child: Container(
+                          constraints: const BoxConstraints(maxWidth: 600),
+                          child: AspectRatio(
+                            aspectRatio: 2 / 3,
+                            child: ClipRRect(
+                              borderRadius: const BorderRadius.only(
+                                bottomLeft: Radius.circular(32),
+                                bottomRight: Radius.circular(32),
+                              ),
+                              child: Image.network(
+                                _show!.image,
+                                fit: BoxFit.cover,
+                                errorBuilder: (context, error, stackTrace) {
+                                  return Container(
+                                    color: Colors.grey.shade800,
+                                    child: const Icon(
+                                      Icons.broken_image,
+                                      size: 64,
+                                      color: Colors.white70,
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                          ),
                         ),
                       ),
-                      const SizedBox(height: 16),
-                      Text(_show!.description),
+                      Container(
+                        height: 300,
+                        decoration: BoxDecoration(
+                          borderRadius: const BorderRadius.only(
+                            bottomLeft: Radius.circular(32),
+                            bottomRight: Radius.circular(32),
+                          ),
+                          gradient: LinearGradient(
+                            colors: [
+                              Colors.black.withOpacity(0.2),
+                              Colors.transparent,
+                              Colors.black.withOpacity(0.6),
+                            ],
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
+                        child: Text(
+                          _show!.name,
+                          style: Theme.of(context)
+                              .textTheme
+                              .headlineSmall
+                              ?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                            shadows: const [
+                              Shadow(
+                                color: Colors.black54,
+                                offset: Offset(2, 2),
+                                blurRadius: 4,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
                     ],
                   ),
-                ),
+                  Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).cardColor,
+                        borderRadius: BorderRadius.circular(20),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.1),
+                            blurRadius: 10,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Description",
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleMedium
+                                ?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            _show!.description,
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyMedium
+                                ?.copyWith(
+                                  height: 1.4,
+                                ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
               ),
+            ),
     );
   }
 }

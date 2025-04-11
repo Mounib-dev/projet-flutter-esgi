@@ -3,11 +3,15 @@ import 'package:provider/provider.dart';
 
 import 'Views/home_view.dart';
 import 'providers/show_provider.dart';
+import 'providers/theme_provider.dart';
 
 void main() {
   runApp(
-    ChangeNotifierProvider(
-      create: (_) => ShowProvider(),
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => ShowProvider()),
+        ChangeNotifierProvider(create: (_) => ThemeProvider()),
+      ],
       child: const MyApp(),
     ),
   );
@@ -15,12 +19,16 @@ void main() {
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context);
+
     return MaterialApp(
-      title: 'TV Shows App',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(primarySwatch: Colors.indigo),
+      theme: ThemeData.light(),
+      darkTheme: ThemeData.dark(),
+      themeMode: themeProvider.themeMode,
       home: const HomeView(),
     );
   }
